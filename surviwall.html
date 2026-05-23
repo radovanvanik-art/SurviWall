@@ -387,6 +387,15 @@
     background: rgba(255,255,255,0.03);
   }
 
+  .qr-image {
+    width: 240px;
+    height: 240px;
+    border-radius: 16px;
+    object-fit: contain;
+    border: 2px solid rgba(0, 255, 136, 0.2);
+    background: #081108;
+  }
+
   .qr-block p {
     max-width: 640px;
     margin: 0 auto;
@@ -873,8 +882,8 @@
 
     <div class="qr-block">
       <h3>Platba cez QR</h3>
-      <div class="qr-placeholder">Sem vložte QR kód</div>
-      <p>Keď budete mať hotový QR kód pre platbu (PayPal, Revolut, banková platba alebo iné), vložte sem obrázok alebo náhradný blok s URL. Zatiaľ tu zostáva miesto pripravené na vašu platobnú QR kartu.</p>
+      <img src="qr.png" alt="QR kód platby" class="qr-image">
+      <p>Ak chcete zmeniť QR kód, nahrajte nový súbor `qr.png` do toho istého priečinka a stránka zobrazí aktualizovaný obrázok.</p>
     </div>
   </div>
 </div>
