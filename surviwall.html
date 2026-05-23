@@ -864,8 +864,7 @@
           <li><span class="feat-check">✓</span>Prístup k SUB kitom</li>
           <li><span class="feat-cross">–</span>Fly módy / extra perky</li>
         </ul>
-        <!-- TODO: replace WITH your PayPal subscription/payment link -->
-        <a href="https://www.paypal.com/YOUR_PAYPAL_SUBSCRIPTION_LINK" target="_blank" rel="noopener noreferrer" class="plan-btn plan-btn-sub">Kúpiť Subscribe (PayPal)</a>
+        <button type="button" class="plan-btn plan-btn-sub" onclick="showQR('qr.png','3 €')">Kúpiť Subscribe</button>
       </div>
 
       <!-- VIP -->
@@ -883,15 +882,14 @@
           <li><span class="feat-gold">★</span>VIP kit (2x denne)</li>
           <li><span class="feat-gold">★</span>Prístup k VIP arénám</li>
         </ul>
-        <!-- TODO: replace WITH your PayPal subscription/payment link -->
-        <a href="https://www.paypal.com/YOUR_PAYPAL_VIP_LINK" target="_blank" rel="noopener noreferrer" class="plan-btn plan-btn-vip">Kúpiť VIP (PayPal)</a>
+        <button type="button" class="plan-btn plan-btn-vip" onclick="showQR('qr_vip.png','7 €')">Kúpiť VIP</button>
       </div>
     </div>
 
-    <div class="qr-block">
+    <div id="qrSection" class="qr-block" style="display:none;">
       <h3>Platba cez QR</h3>
-      <img src="qr.png" alt="QR kód platby" class="qr-image">
-      <p class="qr-amount">Suma: 3 €</p>
+      <img id="qrImg" src="qr.png" alt="QR kód platby" class="qr-image">
+      <p class="qr-amount">Suma: </p>
     </div>
   </div>
 </div>
@@ -1175,6 +1173,19 @@ setTimeout(() => {
 // ── COPY IP ──
 function copyIP() {
   navigator.clipboard.writeText('185.180.2.21:27090').then(() => showToast('IP skopírovaná! ⎘'));
+}
+
+// ── SHOW QR ──
+function showQR(imageSrc, amountText) {
+  const sec = document.getElementById('qrSection');
+  const img = document.getElementById('qrImg');
+  const amt = document.querySelector('.qr-amount');
+  if (img && imageSrc) img.src = imageSrc;
+  if (amt) amt.textContent = 'Suma: ' + amountText;
+  if (sec) {
+    sec.style.display = 'block';
+    sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 }
 
 // ── TOAST ──
