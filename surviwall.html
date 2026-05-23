@@ -31,7 +31,7 @@
 
   body {
     font-family: 'Rajdhani', sans-serif;
-    background: var(--bg);
+    background: linear-gradient(rgba(6,10,6,0.86), rgba(6,10,6,0.86)), url('minecraft_bg.jpg') center/cover fixed;
     color: var(--text);
     overflow-x: hidden;
     cursor: default;
@@ -86,6 +86,18 @@
     letter-spacing: 1px;
   }
   .nav-ip:hover { background: #00ff8820; }
+
+    /* Minecraft theme: custom cursors (place cursor images in project root)
+      Expected files: cursor_pickaxe.png, cursor_shovel.png, cursor_axe.png, cursor_sword.png */
+    :root { --cursor-x: 16; --cursor-y: 16; }
+
+    /* default cursor as pickaxe */
+    body, a, button { cursor: url('cursor_pickaxe.png') var(--cursor-x) var(--cursor-y), auto; }
+
+    /* hover different tools on interactive areas */
+    .plan-card:hover, .btn-primary:hover, .btn-secondary:hover, .plan-btn:hover { cursor: url('cursor_shovel.png') var(--cursor-x) var(--cursor-y), auto; }
+    .team-card:hover { cursor: url('cursor_axe.png') var(--cursor-x) var(--cursor-y), auto; }
+    .nav-ip { cursor: url('cursor_sword.png') var(--cursor-x) var(--cursor-y), auto; }
 
   /* ── HERO ── */
   #hero {
