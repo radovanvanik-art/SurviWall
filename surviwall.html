@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SurviWall – Minecraft Server</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --green-dark: #003320;
+    --bg: #060a06;
+    --bg2: #0a100a;
+    --bg3: #0f170f;
+    --surface: #111911;
+    --surface2: #16201a;
+    --border: #1a2e1a;
+    --border-bright: #00ff8840;
+    --text: #c8e6c8;
+    --text-dim: #6a8a6a;
+    --red: #ff3333;
+    --gold: #ffd700;
+    --blue: #00aaff;
+    --purple: #aa55ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── CANVAS PARTICLE BG ── */
+  #particles {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #060a06ee 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+    padding: 18px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border-bright);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px; font-weight: 900;
+    color: var(--green);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px #00ff8866;
+  }
+  .nav-logo span { color: #fff; }
+
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-dim); text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+
+  .nav-ip {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    background: var(--green-dark);
+    border: 1px solid var(--border-bright);
+    color: var(--green);
+    padding: 8px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background .2s;
+    letter-spacing: 1px;
+  }
+  .nav-ip:hover { background: #00ff8820; }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+  }
+
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; letter-spacing: 4px;
+    color: var(--green); text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: .8;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(52px, 10vw, 110px);
+    font-weight: 900;
+    line-height: .9;
+    letter-spacing: -2px;
+    color: #fff;
+    text-shadow: 0 0 60px #00ff8833, 0 0 120px #00ff8811;
+    margin-bottom: 8px;
+  }
+
+  .hero-title .accent { color: var(--green); }
+
+  .hero-sub {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(18px, 3vw, 32px);
+    font-weight: 400;
+    letter-spacing: 12px;
+    color: var(--text-dim);
+    margin-bottom: 48px;
+    text-transform: uppercase;
+  }
+
+  .hero-desc {
+    font-size: 18px; font-weight: 300;
+    color: var(--text-dim);
+    max-width: 540px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  .hero-btns { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 18px 44px;
+    background: var(--green);
+    color: #000;
+    border: none; border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+    box-shadow: 0 0 30px #00ff8855;
+  }
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 50px #00ff88aa;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 17px 44px;
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--border-bright);
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .btn-secondary:hover {
+    background: #00ff8812;
+    border-color: var(--green);
+    transform: translateY(-2px);
+  }
+
+  /* server stats bar */
+  .stats-bar {
+    position: relative; z-index: 1;
+    display: flex; justify-content: center;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .stat-item {
+    flex: 1; max-width: 220px;
+    padding: 28px 24px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px; font-weight: 700;
+    color: var(--green);
+    text-shadow: 0 0 20px #00ff8855;
+  }
+
+  .stat-label {
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative; z-index: 1;
+    padding: 100px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--green); text-transform: uppercase;
+    margin-bottom: 12px; opacity: .8;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700; color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 48px;
+    line-height: 1.1;
+  }
+
+  .section-title span { color: var(--green); }
+
+  /* ── REGISTER / SHOP ── */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    background: var(--border);
+  }
+
+  .plan-card {
+    background: var(--surface);
+    padding: 48px 36px;
+    position: relative;
+    transition: background .2s;
+    overflow: hidden;
+  }
+
+  .plan-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border-bright);
+    transition: background .3s;
+  }
+
+  .plan-card.featured::before { background: var(--green); }
+  .plan-card.vip-plus::before { background: var(--gold); }
+
+  .plan-card:hover { background: var(--surface2); }
+
+  .plan-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .badge-free { background: #1a2a1a; color: var(--text-dim); border: 1px solid var(--border); }
+  .badge-sub { background: #002a18; color: var(--green); border: 1px solid var(--border-bright); }
+  .badge-vip { background: #2a1a00; color: var(--gold); border: 1px solid #ffd70040; }
+
+  .plan-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px; font-weight: 700;
+    color: #fff; margin-bottom: 12px;
+  }
+
+  .plan-price {
+    font-family: 'Orbitron', monospace;
+    font-size: 42px; font-weight: 900;
+    color: var(--green);
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+
+  .plan-card.vip-plus .plan-price { color: var(--gold); }
+
+  .plan-period {
+    font-size: 13px; color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+
+  .plan-features {
+    list-style: none;
+    margin-bottom: 36px;
+  }
+
+  .plan-features li {
+    font-size: 15px; font-weight: 400;
+    color: var(--text-dim);
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .plan-features li:last-child { border-bottom: none; }
+
+  .feat-check { color: var(--green); font-size: 16px; font-weight: 700; }
+  .feat-cross { color: #333; font-size: 16px; }
+  .feat-gold { color: var(--gold); font-size: 16px; font-weight: 700; }
+
+  .plan-btn {
+    display: block; width: 100%;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 16px;
+    text-align: center; text-decoration: none;
+    border-radius: 3px;
+    transition: all .2s;
+    cursor: pointer; border: none;
+  }
+
+  .plan-btn-free {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .plan-btn-free:hover { border-color: var(--text-dim); color: #fff; }
+
+  .plan-btn-sub {
+    background: var(--green);
+    color: #000;
+    box-shadow: 0 0 20px #00ff8840;
+  }
+  .plan-btn-sub:hover {
+    background: #fff;
+    box-shadow: 0 0 40px #00ff88aa;
+    transform: translateY(-2px);
+  }
+
+  .plan-btn-vip {
+    background: var(--gold);
+    color: #000;
+    box-shadow: 0 0 20px #ffd70040;
+  }
+  .plan-btn-vip:hover {
+    background: #fff;
+    box-shadow: 0 0 40px #ffd700aa;
+    transform: translateY(-2px);
+  }
+
+  /* ── REGISTER FORM ── */
+  .reg-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) { .reg-wrap { grid-template-columns: 1fr; } }
+
+  .reg-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 48px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 14px 18px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .form-group input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 2px #00ff8815;
+  }
+
+  .form-group input::placeholder { color: var(--text-dim); }
+
+  .reg-info h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px; color: #fff;
+    margin-bottom: 24px;
+  }
+
+  .reg-steps { list-style: none; }
+
+  .reg-steps li {
+    display: flex; gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .reg-steps li:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px; font-weight: 700;
+    color: var(--border-bright);
+    min-width: 40px; line-height: 1;
+  }
+
+  .step-text h4 {
+    font-size: 16px; font-weight: 600;
+    color: #fff; margin-bottom: 4px;
+  }
+
+  .step-text p {
+    font-size: 14px; color: var(--text-dim); line-height: 1.6;
+  }
+
+  /* ── ADMIN LIST ── */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2px;
+    background: var(--border);
+  }
+
+  .team-card {
+    background: var(--surface);
+    padding: 32px 24px;
+    text-align: center;
+    transition: background .2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .team-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .team-card.role-owner::before { background: var(--gold); }
+  .team-card.role-admin::before { background: var(--red); }
+  .team-card.role-mod::before { background: var(--blue); }
+  .team-card.role-helper::before { background: var(--purple); }
+
+  .team-card:hover { background: var(--surface2); }
+
+  .team-avatar {
+    width: 72px; height: 72px;
+    border-radius: 4px;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 22px; font-weight: 700;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: #fff;
+  }
+
+  .team-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px; font-weight: 700;
+    color: #fff; margin-bottom: 6px;
+  }
+
+  .team-role {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .role-owner .team-role { background: #2a1f00; color: var(--gold); }
+  .role-admin .team-role { background: #2a0a0a; color: var(--red); }
+  .role-mod .team-role { background: #001a2a; color: var(--blue); }
+  .role-helper .team-role { background: #1a0a2a; color: var(--purple); }
+
+  /* ── BAN LIST ── */
+  .ban-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .ban-search-bar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ban-search-bar input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 10px 16px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .ban-search-bar input:focus { border-color: var(--red); }
+  .ban-search-bar input::placeholder { color: var(--text-dim); }
+
+  .ban-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .ban-count span { color: var(--red); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: var(--bg3);
+  }
+
+  thead th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+
+  tbody tr:hover { background: var(--surface2); }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 16px 20px;
+    font-size: 15px; color: var(--text-dim);
+  }
+
+  .player-name {
+    font-family: 'Share Tech Mono', monospace;
+    color: #fff; font-size: 14px;
+  }
+
+  .ban-reason {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .ban-severity {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 2px;
+  }
+
+  .sev-perm { background: #2a0a0a; color: var(--red); }
+  .sev-temp { background: #2a1a00; color: var(--gold); }
+  .sev-warn { background: #1a1a00; color: #aaaa00; }
+
+  .ban-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--text-dim);
+  }
+
+  .banned-by {
+    font-size: 13px; color: var(--text-dim);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 60px 48px 40px;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px; font-weight: 900;
+    color: var(--green); letter-spacing: 4px;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px #00ff8855;
+  }
+
+  .footer-logo span { color: #fff; }
+
+  .footer-ip {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px; color: var(--text-dim);
+    margin-bottom: 32px;
+    cursor: pointer;
+  }
+
+  .footer-ip:hover { color: var(--green); }
+
+  .footer-links {
+    display: flex; justify-content: center; gap: 32px;
+    margin-bottom: 40px; flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-dim); text-decoration: none;
+    transition: color .2s;
+  }
+
+  .footer-links a:hover { color: var(--green); }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--border);
+    letter-spacing: 1px;
+  }
+
+  /* ── DIVIDER ── */
+  .full-divider {
+    position: relative; z-index: 1;
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── GLOW LINE ── */
+  .glow-line {
+    position: relative; z-index: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: .4;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px;
+    background: var(--green);
+    color: #000;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    padding: 14px 24px;
+    border-radius: 3px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all .3s;
+    z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--green-dim); }
+
+  /* section bg stripes */
+  .stripe-bg {
+    position: relative;
+    z-index: 1;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px
+    );
+  }
+
+  .section-inner {
+    background: var(--bg);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    section, .section-inner { padding: 80px 24px; }
+    .reg-wrap { grid-template-columns: 1fr; }
+    footer { padding: 60px 24px 40px; }
+    .plans-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    thead th:nth-child(4), td:nth-child(4),
+    thead th:nth-child(5), td:nth-child(5) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Survi<span>Wall</span></div>
+  <div class="nav-links">
+    <a href="#about">Server</a>
+    <a href="#shop">Shop</a>
+    <a href="#register">Registrácia</a>
+    <a href="#team">Team</a>
+    <a href="#bans">Ban List</a>
+  </div>
+  <button class="nav-ip" onclick="copyIP()">play.surviwall.sk ⎘</button>
+</nav>
+
+<!-- HERO -->
+<section id="about" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:140px; max-width:100%;">
+  <p class="hero-tag">// Slovenský Minecraft Server //</p>
+  <h1 class="hero-title">Survi<span class="accent">Wall</span></h1>
+  <p class="hero-sub">Survival · PvP · Community</p>
+  <p class="hero-desc">
+    Zažij survival na novej úrovni. Buduj, bojuj a ovládni svet plný hráčov, eventov a nekonečných možností. SurviWall nie je len server — je to komunita.
+  </p>
+  <div class="hero-btns">
+    <a href="#shop" class="btn-primary">Kúpiť VIP / Sub</a>
+    <a href="#register" class="btn-secondary">Registrovať sa</a>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="playerCount">0</div>
+    <div class="stat-label">Hráčov online</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">1.21</div>
+    <div class="stat-label">Verzia</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Uptime</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="regCount">0</div>
+    <div class="stat-label">Registrovaných</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">0ms</div>
+    <div class="stat-label">Ping</div>
+  </div>
+</div>
+
+<div class="glow-line"></div>
+<hr class="full-divider">
+
+<!-- SHOP -->
+<div class="stripe-bg" id="shop">
+  <div class="section-inner" style="background:transparent;">
+    <p class="section-tag">// shop //</p>
+    <h2 class="section-title">Vyber si svoj <span>plán</span></h2>
+
+    <div class="plans-grid">
+      <!-- FREE -->
+      <div class="plan-card">
+        <span class="plan-badge badge-free">Základné</span>
+        <div class="plan-name">Hráč</div>
+        <div class="plan-price" style="color:#fff;">0€</div>
+        <div class="plan-period">navždy zadarmo</div>
+        <ul class="plan-features">
+          <li><span class="feat-check">✓</span>Prístup na server</li>
+          <li><span class="feat-check">✓</span>Základný spawn kit</li>
+          <li><span class="feat-check">✓</span>Claim pozemkov (5)</li>
+          <li><span class="feat-check">✓</span>Chat v globálke</li>
+          <li><span class="feat-cross">–</span>Farebný nick</li>
+          <li><span class="feat-cross">–</span>Extra warpy</li>
+          <li><span class="feat-cross">–</span>VIP prefix</li>
+        </ul>
+        <a href="#register" class="plan-btn plan-btn-free">Hrať zadarmo</a>
+      </div>
+
+      <!-- SUB -->
+      <div class="plan-card featured">
+        <span class="plan-badge badge-sub">Najpopulárnejší</span>
+        <div class="plan-name">Subscribe</div>
+        <div class="plan-price">3€</div>
+        <div class="plan-period">/ mesačne</div>
+        <ul class="plan-features">
+          <li><span class="feat-check">✓</span>Všetko z Hráč</li>
+          <li><span class="feat-check">✓</span>Farebný nick</li>
+          <li><span class="feat-check">✓</span>Claim pozemkov (25)</li>
+          <li><span class="feat-check">✓</span>3x warp-set</li>
+          <li><span class="feat-check">✓</span>[SUB] prefix v chate</li>
+          <li><span class="feat-check">✓</span>Prístup k SUB kitom</li>
+          <li><span class="feat-cross">–</span>Fly módy / extra perky</li>
+        </ul>
+        <a href="#register" class="plan-btn plan-btn-sub">Kúpiť Subscribe</a>
+      </div>
+
+      <!-- VIP -->
+      <div class="plan-card vip-plus">
+        <span class="plan-badge badge-vip">Premium</span>
+        <div class="plan-name">VIP</div>
+        <div class="plan-price" style="color:var(--gold);">7€</div>
+        <div class="plan-period">/ mesačne</div>
+        <ul class="plan-features">
+          <li><span class="feat-gold">★</span>Všetko z Subscribe</li>
+          <li><span class="feat-gold">★</span>Fly na spawn oblasti</li>
+          <li><span class="feat-gold">★</span>Claim pozemkov (100)</li>
+          <li><span class="feat-gold">★</span>10x warp-set</li>
+          <li><span class="feat-gold">★</span>[VIP] zlatý prefix</li>
+          <li><span class="feat-gold">★</span>VIP kit (2x denne)</li>
+          <li><span class="feat-gold">★</span>Prístup k VIP arénám</li>
+        </ul>
+        <a href="#register" class="plan-btn plan-btn-vip">Kúpiť VIP</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="full-divider">
+
+<!-- REGISTER -->
+<section id="register" style="max-width:1200px;">
+  <p class="section-tag">// registrácia //</p>
+  <h2 class="section-title">Zaregistruj sa a <span>začni hrať</span></h2>
+
+  <div class="reg-wrap">
+    <div class="reg-form">
+      <div class="form-group">
+        <label>Minecraft Nickname</label>
+        <input type="text" placeholder="NaprSteveKing99">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="tvoj@email.com">
+      </div>
+      <div class="form-group">
+        <label>Heslo</label>
+        <input type="password" placeholder="••••••••••••">
+      </div>
+      <div class="form-group">
+        <label>Potvrď heslo</label>
+        <input type="password" placeholder="••••••••••••">
+      </div>
+      <button class="plan-btn plan-btn-sub" onclick="showToast('Registrácia úspešná! Vitaj v SurviWall! ✓')">Vytvoriť účet</button>
+    </div>
+
+    <div class="reg-info">
+      <h3>Ako to funguje?</h3>
+      <ol class="reg-steps">
+        <li>
+          <span class="step-num">01</span>
+          <div class="step-text">
+            <h4>Zaregistruj sa</h4>
+            <p>Vytvor si účet s tvojim Minecraft nickom a emailom.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">02</span>
+          <div class="step-text">
+            <h4>Pripojos sa na server</h4>
+            <p>Otvor Minecraft, pridaj server <strong style="color:var(--green);font-family:Share Tech Mono,monospace;">play.surviwall.sk</strong> a prihlás sa.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">03</span>
+          <div class="step-text">
+            <h4>Vyber plán (voliteľné)</h4>
+            <p>V sekcii Shop si vyber Subscribe alebo VIP a odomkni exkluzívne výhody.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">04</span>
+          <div class="step-text">
+            <h4>Hrať!</h4>
+            <p>Buduj, bojuj a pripoj sa k komunite SurviWall.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+<hr class="full-divider">
+
+<!-- ADMIN / TEAM -->
+<div class="stripe-bg" id="team">
+  <div class="section-inner" style="background:transparent;">
+    <p class="section-tag">// tím //</p>
+    <h2 class="section-title">Admin <span>tím</span></h2>
+
+    <div class="team-grid">
+      <div class="team-card role-owner">
+        <div class="team-avatar" style="border-color:#ffd70040; color:var(--gold);">SW</div>
+        <div class="team-name">SurviKing</div>
+        <span class="team-role">Owner</span>
+      </div>
+      <div class="team-card role-admin">
+        <div class="team-avatar" style="border-color:#ff333340;">Z</div>
+        <div class="team-name">Zarok_</div>
+        <span class="team-role">Admin</span>
+      </div>
+      <div class="team-card role-admin">
+        <div class="team-avatar" style="border-color:#ff333340;">N</div>
+        <div class="team-name">NexorPL</div>
+        <span class="team-role">Admin</span>
+      </div>
+      <div class="team-card role-mod">
+        <div class="team-avatar" style="border-color:#00aaff40;">V</div>
+        <div class="team-name">Veronika_S</div>
+        <span class="team-role">Moderátor</span>
+      </div>
+      <div class="team-card role-mod">
+        <div class="team-avatar" style="border-color:#00aaff40;">D</div>
+        <div class="team-name">DarkPatrol</div>
+        <span class="team-role">Moderátor</span>
+      </div>
+      <div class="team-card role-helper">
+        <div class="team-avatar" style="border-color:#aa55ff40;">L</div>
+        <div class="team-name">Lukas_H</div>
+        <span class="team-role">Helper</span>
+      </div>
+      <div class="team-card role-helper">
+        <div class="team-avatar" style="border-color:#aa55ff40;">M</div>
+        <div class="team-name">MiniMaja</div>
+        <span class="team-role">Helper</span>
+      </div>
+      <div class="team-card role-helper">
+        <div class="team-avatar" style="border-color:#aa55ff40;">T</div>
+        <div class="team-name">TomiKlíma</div>
+        <span class="team-role">Helper</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="full-divider">
+
+<!-- BAN LIST -->
+<section id="bans" style="max-width:1200px;">
+  <p class="section-tag">// ban list //</p>
+  <h2 class="section-title">Ban <span>zoznam</span></h2>
+
+  <div class="ban-table-wrap">
+    <div class="ban-search-bar">
+      <input type="text" id="banSearch" placeholder="Hľadaj hráča..." oninput="filterBans()">
+      <span class="ban-count">Celkom: <span id="banTotal">9</span> banov</span>
+    </div>
+    <table id="banTable">
+      <thead>
+        <tr>
+          <th>Hráč</th>
+          <th>Dôvod</th>
+          <th>Typ</th>
+          <th>Dátum</th>
+          <th>Zabanoval</th>
+        </tr>
+      </thead>
+      <tbody id="banBody">
+        <tr>
+          <td><span class="player-name">xHackerPro</span></td>
+          <td><span class="ban-reason">Hack klient (KillAura)</span></td>
+          <td><span class="ban-severity sev-perm">Permanentný</span></td>
+          <td><span class="ban-date">2025-04-12</span></td>
+          <td><span class="banned-by">Zarok_</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">GrieferKing</span></td>
+          <td><span class="ban-reason">Griefing chránených zón</span></td>
+          <td><span class="ban-severity sev-perm">Permanentný</span></td>
+          <td><span class="ban-date">2025-04-18</span></td>
+          <td><span class="banned-by">SurviKing</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">SpeedRun99</span></td>
+          <td><span class="ban-reason">Speed hack</span></td>
+          <td><span class="ban-severity sev-temp">30 dní</span></td>
+          <td><span class="ban-date">2025-05-01</span></td>
+          <td><span class="banned-by">NexorPL</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">ToxicChat_</span></td>
+          <td><span class="ban-reason">Rasizmus v chate</span></td>
+          <td><span class="ban-severity sev-perm">Permanentný</span></td>
+          <td><span class="ban-date">2025-05-03</span></td>
+          <td><span class="banned-by">Veronika_S</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">ItemDuper01</span></td>
+          <td><span class="ban-reason">Duplikácia itemov (bug exploit)</span></td>
+          <td><span class="ban-severity sev-temp">14 dní</span></td>
+          <td><span class="ban-date">2025-05-08</span></td>
+          <td><span class="banned-by">Zarok_</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">FloodBot2000</span></td>
+          <td><span class="ban-reason">Chat flood / bot</span></td>
+          <td><span class="ban-severity sev-perm">Permanentný</span></td>
+          <td><span class="ban-date">2025-05-09</span></td>
+          <td><span class="banned-by">DarkPatrol</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">StealMaster</span></td>
+          <td><span class="ban-reason">Krádež z claimu (exploit)</span></td>
+          <td><span class="ban-severity sev-temp">7 dní</span></td>
+          <td><span class="ban-date">2025-05-10</span></td>
+          <td><span class="banned-by">Lukas_H</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">AltFarmer_x</span></td>
+          <td><span class="ban-reason">Multi-account farming</span></td>
+          <td><span class="ban-severity sev-warn">Varovanie</span></td>
+          <td><span class="ban-date">2025-05-14</span></td>
+          <td><span class="banned-by">NexorPL</span></td>
+        </tr>
+        <tr>
+          <td><span class="player-name">NightTroller</span></td>
+          <td><span class="ban-reason">Úmyselný trolling nových hráčov</span></td>
+          <td><span class="ban-severity sev-temp">3 dni</span></td>
+          <td><span class="ban-date">2025-05-20</span></td>
+          <td><span class="banned-by">MiniMaja</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="full-divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Survi<span>Wall</span></div>
+  <div class="footer-ip" onclick="copyIP()">play.surviwall.sk — klikni pre kopírovanie</div>
+  <div class="footer-links">
+    <a href="#about">Server</a>
+    <a href="#shop">Shop</a>
+    <a href="#register">Registrácia</a>
+    <a href="#team">Tím</a>
+    <a href="#bans">Ban List</a>
+    <a href="#">Discord</a>
+    <a href="#">Pravidlá</a>
+  </div>
+  <p class="footer-copy">© 2025 SurviWall — Všetky práva vyhradené. Nie sme prepojení s Mojang Studios.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── PARTICLES ──
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function Particle() {
+  this.x = Math.random() * W;
+  this.y = Math.random() * H;
+  this.vx = (Math.random() - .5) * .4;
+  this.vy = (Math.random() - .5) * .4;
+  this.r = Math.random() * 1.5 + .3;
+  this.a = Math.random() * .5 + .1;
+}
+
+for (let i = 0; i < 90; i++) particles.push(new Particle());
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  for (let p of particles) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,255,136,${p.a})`;
+    ctx.fill();
+  }
+  // connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,255,136,${.12 * (1 - d/120)})`;
+        ctx.lineWidth = .5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ── COUNTER ANIMATION ──
+function animCount(el, target, dur) {
+  let start = 0, step = target / (dur / 16);
+  const iv = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.round(start);
+    if (start >= target) clearInterval(iv);
+  }, 16);
+}
+
+setTimeout(() => {
+  animCount(document.getElementById('playerCount'), 47, 1200);
+  animCount(document.getElementById('regCount'), 1283, 1800);
+}, 400);
+
+// ── COPY IP ──
+function copyIP() {
+  navigator.clipboard.writeText('play.surviwall.sk').then(() => showToast('IP skopírovaná! ⎘'));
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── BAN SEARCH ──
+function filterBans() {
+  const q = document.getElementById('banSearch').value.toLowerCase();
+  const rows = document.querySelectorAll('#banBody tr');
+  let visible = 0;
+  rows.forEach(r => {
+    const match = r.textContent.toLowerCase().includes(q);
+    r.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('banTotal').textContent = visible;
+}
+</script>
+</body>
+</html>
