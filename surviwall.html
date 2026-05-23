@@ -357,6 +357,42 @@
     transform: translateY(-2px);
   }
 
+  .qr-block {
+    background: rgba(0, 255, 136, 0.06);
+    border: 1px dashed rgba(0, 255, 136, 0.35);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 32px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  .qr-block h3 {
+    font-family: 'Orbitron', monospace;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+
+  .qr-placeholder {
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 18px;
+    border-radius: 16px;
+    border: 2px dashed rgba(0, 255, 136, 0.4);
+    display: grid;
+    place-items: center;
+    color: rgba(255,255,255,.5);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .qr-block p {
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
   /* ── REGISTER FORM ── */
   .reg-wrap {
     display: grid;
@@ -833,6 +869,12 @@
         <!-- TODO: replace WITH your PayPal subscription/payment link -->
         <a href="https://www.paypal.com/YOUR_PAYPAL_VIP_LINK" target="_blank" rel="noopener noreferrer" class="plan-btn plan-btn-vip">Kúpiť VIP (PayPal)</a>
       </div>
+    </div>
+
+    <div class="qr-block">
+      <h3>Platba cez QR</h3>
+      <div class="qr-placeholder">Sem vložte QR kód</div>
+      <p>Keď budete mať hotový QR kód pre platbu (PayPal, Revolut, banková platba alebo iné), vložte sem obrázok alebo náhradný blok s URL. Zatiaľ tu zostáva miesto pripravené na vašu platobnú QR kartu.</p>
     </div>
   </div>
 </div>
