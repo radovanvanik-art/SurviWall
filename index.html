@@ -861,7 +861,7 @@
     nav {
       padding: 18px 24px;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 18px;
       justify-content: center;
     }
     .nav-links {
@@ -874,14 +874,31 @@
       max-width: 320px;
       text-align: center;
     }
-    section, .section-inner { padding: 80px 20px; }
-    .hero-title { font-size: clamp(40px, 10vw, 80px); }
-    .hero-sub { font-size: clamp(16px, 4vw, 24px); letter-spacing: 8px; }
-    .hero-desc { margin: 0 auto 48px; padding: 0 6px; }
-    .plans-grid { grid-template-columns: 1fr; gap: 18px; }
-    .team-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
-    .reg-wrap { grid-template-columns: 1fr; }
-    footer { padding: 60px 24px 40px; }
+    section, .section-inner { padding: 90px 18px; }
+    .section-inner { padding-top: 70px; }
+    .hero-tag { margin-bottom: 30px; }
+    .hero-title { font-size: clamp(36px, 10vw, 72px); line-height: 1.05; }
+    .hero-sub { font-size: clamp(15px, 4vw, 22px); letter-spacing: 6px; margin-bottom: 28px; }
+    .hero-desc { margin: 0 auto 48px; padding: 0 12px; max-width: 500px; line-height: 1.7; }
+    .hero-btns {
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .hero-btns a {
+      width: 100%;
+      justify-content: center;
+    }
+    .plans-grid { grid-template-columns: 1fr; gap: 24px; }
+    .plan-card { padding: 36px 24px; }
+    .team-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 22px; }
+    .team-card { padding: 28px 20px; }
+    .reg-wrap { grid-template-columns: 1fr; gap: 24px; }
+    footer { padding: 60px 20px 40px; }
+    .ban-search-bar { flex-direction: column; align-items: stretch; }
+    .ban-search-bar input { width: 100%; }
     thead th:nth-child(4), td:nth-child(4),
     thead th:nth-child(5), td:nth-child(5) { display: none; }
   }
