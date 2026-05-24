@@ -29,6 +29,15 @@
 
   html { scroll-behavior: smooth; }
 
+  html, body {
+    min-height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+
   body {
     font-family: 'Rajdhani', sans-serif;
     background-image: linear-gradient(rgba(6,10,6,0.85), rgba(6,10,6,0.85)), url('minecraft_bg.jpg');
@@ -37,7 +46,6 @@
     background-position: center top;
     background-attachment: scroll;
     color: var(--text);
-    overflow-x: hidden;
     cursor: default;
   }
 
@@ -841,6 +849,9 @@
     body {
       background-attachment: scroll;
       background-position: center top;
+    }
+    #particles {
+      display: none;
     }
     nav {
       padding: 18px 24px;
