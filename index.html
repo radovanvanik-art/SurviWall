@@ -38,19 +38,24 @@
     touch-action: pan-y;
   }
 
-  body {
-    font-family: 'Rajdhani', sans-serif;
+  html {
     background-image: linear-gradient(rgba(6,10,6,0.85), rgba(6,10,6,0.85)), url('minecraft_bg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center top;
     background-attachment: scroll;
+  }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
     color: var(--text);
     cursor: default;
+    background: transparent;
   }
 
   @media (min-width: 901px) {
-    body { background-attachment: fixed; }
+    html { background-attachment: fixed; }
   }
 
   /* ── CANVAS PARTICLE BG ── */
