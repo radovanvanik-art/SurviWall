@@ -31,7 +31,7 @@
 
   body {
     font-family: 'Rajdhani', sans-serif;
-    background: linear-gradient(rgba(6,10,6,0.86), rgba(6,10,6,0.86)), url('minecraft_bg.jpg') center/cover fixed;
+    background: linear-gradient(rgba(6,10,6,0.85), rgba(6,10,6,0.85)), url('minecraft_bg.jpg') center/cover fixed;
     color: var(--text);
     overflow-x: hidden;
     cursor: default;
@@ -88,33 +88,84 @@
   .nav-ip:hover { background: #00ff8820; }
 
       /* Minecraft theme: custom cursors (place cursor images in project root)
-        Expected files: pickaxe.png, cursor_sword.png */
-      :root { --cursor-x: 16; --cursor-y: 16; }
+        PNG must be <= 32x32px or browser will use fallback */
+      :root { --cursor-x: 0; --cursor-y: 0; }
 
       /* default cursor as pickaxe */
-      body, a, button { cursor: url('pickaxe.png') var(--cursor-x) var(--cursor-y), auto; }
+      body { cursor: url('pickaxe.png') 0 0, default; }
+      a, button { cursor: url('pickaxe.png') 0 0, pointer; }
 
       /* hover different tools on interactive areas */
-      .plan-card:hover, .btn-primary:hover, .btn-secondary:hover, .plan-btn:hover { cursor: url('pickaxe.png') var(--cursor-x) var(--cursor-y), auto; }
+      .plan-card:hover, .btn-primary:hover, .btn-secondary:hover, .plan-btn:hover { cursor: url('pickaxe.png') 0 0, pointer; }
 
       /* owner/admin cards use sword */
-      .team-card.role-owner:hover, .team-card.role-admin:hover { cursor: url('cursor_sword.png') var(--cursor-x) var(--cursor-y), auto; }
-      .team-card:not(.role-owner):not(.role-admin):hover { cursor: url('pickaxe.png') var(--cursor-x) var(--cursor-y), auto; }
+      .team-card.role-owner:hover, .team-card.role-admin:hover { cursor: url('cursor_sword.png') 0 0, pointer; }
+      .team-card:not(.role-owner):not(.role-admin):hover { cursor: url('pickaxe.png') 0 0, pointer; }
 
       /* nav IP uses sword as quick action */
-      .nav-ip { cursor: url('cursor_sword.png') var(--cursor-x) var(--cursor-y), auto; }
+      .nav-ip { cursor: url('cursor_sword.png') 0 0, pointer; }
 
       /* when the Team section is in view, show sword cursor globally */
-      body.in-team-view, body.in-team-view a, body.in-team-view button { cursor: url('cursor_sword.png') var(--cursor-x) var(--cursor-y), auto; }
+      body.in-team-view { cursor: url('cursor_sword.png') 0 0, default; }
+      body.in-team-view a, body.in-team-view button { cursor: url('cursor_sword.png') 0 0, pointer; }
 
-  /* ── HERO ── */
-  #hero {
-    position: relative; z-index: 1;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 120px 24px 80px;
+  /* ── HERO MINECRAFT FALLING BLOCKS BACKGROUND ── */
+  #about {
+    position: relative;
+    overflow: hidden;
+  }
+
+  #about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: transparent;
+  }
+
+  .falling-block {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.25;
+  }
+
+  .falling-block::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #00ff88;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 255, 136, 0.1) 0px,
+      rgba(0, 255, 136, 0.1) 12px,
+      rgba(0, 255, 136, 0.2) 12px,
+      rgba(0, 255, 136, 0.2) 24px
+    );
+    animation: fallBlockHero 8s linear infinite;
+  }
+
+  @keyframes fallBlockHero {
+    0% { transform: translateY(-100px) rotateX(0deg) rotateZ(0deg); opacity: 0.3; }
+    50% { opacity: 0.15; }
+    100% { transform: translateY(100vh) rotateX(360deg) rotateZ(360deg); opacity: 0; }
+  }
+
+  .falling-block:nth-child(1) { left: 10%; animation-delay: 0s; }
+  .falling-block:nth-child(2) { left: 25%; animation-delay: 1s; }
+  .falling-block:nth-child(3) { left: 40%; animation-delay: 2s; }
+  .falling-block:nth-child(4) { left: 55%; animation-delay: 1.5s; }
+  .falling-block:nth-child(5) { left: 70%; animation-delay: 2.5s; }
+  .falling-block:nth-child(6) { left: 85%; animation-delay: 0.5s; }
+
+  #about > * {
+    position: relative;
+    z-index: 2;
   }
 
   .hero-tag {
@@ -258,8 +309,8 @@
   .plans-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2px;
-    background: var(--border);
+    gap: 24px;
+    background: transparent;
   }
 
   .plan-card {
@@ -268,18 +319,9 @@
     position: relative;
     transition: background .2s;
     overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
   }
-
-  .plan-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--border-bright);
-    transition: background .3s;
-  }
-
-  .plan-card.featured::before { background: var(--green); }
-  .plan-card.vip-plus::before { background: var(--gold); }
 
   .plan-card:hover { background: var(--surface2); }
 
@@ -326,11 +368,8 @@
     font-size: 15px; font-weight: 400;
     color: var(--text-dim);
     padding: 9px 0;
-    border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 10px;
   }
-
-  .plan-features li:last-child { border-bottom: none; }
 
   .feat-check { color: var(--green); font-size: 16px; font-weight: 700; }
   .feat-cross { color: #333; font-size: 16px; }
@@ -514,8 +553,8 @@
   .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 2px;
-    background: var(--border);
+    gap: 24px;
+    background: transparent;
   }
 
   .team-card {
@@ -525,18 +564,9 @@
     transition: background .2s;
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
   }
-
-  .team-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-
-  .team-card.role-owner::before { background: var(--gold); }
-  .team-card.role-admin::before { background: var(--red); }
-  .team-card.role-mod::before { background: var(--blue); }
-  .team-card.role-helper::before { background: var(--purple); }
 
   .team-card:hover { background: var(--surface2); }
 
@@ -728,13 +758,40 @@
     margin: 0;
   }
 
-  /* ── GLOW LINE ── */
+  /* ── MINECRAFT FALLING BLOCKS ── */
   .glow-line {
-    position: relative; z-index: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--green), transparent);
-    opacity: .4;
+    position: relative;
+    height: 60px;
+    background: transparent;
+    overflow: hidden;
+    margin: 20px 0;
   }
+
+  .minecraft-block {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: repeating-linear-gradient(
+      45deg,
+      #00ff8822 0px,
+      #00ff8822 8px,
+      #00ff8844 8px,
+      #00ff8844 16px
+    );
+    border: 1px solid #00ff88;
+    animation: fallBlock 4s linear infinite;
+  }
+
+  @keyframes fallBlock {
+    0% { transform: translateY(-80px) rotateZ(0deg); opacity: 1; }
+    100% { transform: translateY(200px) rotateZ(360deg); opacity: 0; }
+  }
+
+  .minecraft-block:nth-child(1) { left: 5%; animation-delay: 0s; }
+  .minecraft-block:nth-child(2) { left: 25%; animation-delay: 0.8s; }
+  .minecraft-block:nth-child(3) { left: 45%; animation-delay: 1.6s; }
+  .minecraft-block:nth-child(4) { left: 65%; animation-delay: 2.4s; }
+  .minecraft-block:nth-child(5) { left: 85%; animation-delay: 3.2s; }
 
   /* ── TOAST ── */
   .toast {
@@ -762,9 +819,7 @@
   .stripe-bg {
     position: relative;
     z-index: 1;
-    background: repeating-linear-gradient(
-      0deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px
-    );
+    background: transparent;
   }
 
   .section-inner {
@@ -805,6 +860,14 @@
 
 <!-- HERO -->
 <section id="about" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:140px; max-width:100%;">
+  <!-- Falling Minecraft Blocks Background -->
+  <div class="falling-block"></div>
+  <div class="falling-block"></div>
+  <div class="falling-block"></div>
+  <div class="falling-block"></div>
+  <div class="falling-block"></div>
+  <div class="falling-block"></div>
+
   <p class="hero-tag">// Slovenský Minecraft Server //</p>
   <h1 class="hero-title">Survi<span class="accent">Wall</span></h1>
   <p class="hero-sub">Survival · PvP · Community</p>
@@ -841,7 +904,13 @@
   </div>
 </div>
 
-<div class="glow-line"></div>
+<div class="glow-line">
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+</div>
 <hr class="full-divider">
 
 <!-- SHOP -->
@@ -978,7 +1047,13 @@
   </div>
 </section>
 
-<div class="glow-line"></div>
+<div class="glow-line">
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+  <div class="minecraft-block"></div>
+</div>
 <hr class="full-divider">
 
 <!-- ADMIN / TEAM -->
@@ -1187,7 +1262,7 @@ function animCount(el, target, dur) {
 
 setTimeout(() => {
   animCount(document.getElementById('playerCount'), 3, 800);
-  animCount(document.getElementById('regCount'), 1283, 1800);
+  animCount(document.getElementById('regCount'), 30, 1800);
 }, 400);
 
 // ── COPY IP ──
